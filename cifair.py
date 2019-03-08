@@ -8,7 +8,7 @@ Created on Fri Mar  8 16:40:16 2019
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Dense
-from tensorflow.python.keras import optimizers
+from tensorflow.python.keras.optimizers import RMSprop, Adam
 import pandas as pd
 
 df=pd.read_csv("./data/trainLabels.csv")
@@ -17,7 +17,7 @@ df['id'] = df['id'].apply(lambda x: str(x) + '.png')
 NO_TRAINING = 40000
 train_df = df.iloc[:NO_TRAINING, :]
 valid_df = df.iloc[NO_TRAINING:, :]
-valid_df.reset_index(inplace=True) 
+valid_df.reset_index(drop=True, inplace=True) 
 datagen=ImageDataGenerator(rescale=1./255)
 train_generator = datagen.flow_from_dataframe(dataframe=train_df, 
                                             directory="./data/train", x_col="id", y_col="label", 
@@ -49,7 +49,7 @@ model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(10, activation='softmax'))
 
-model.compile(optimizers.rmsprop(lr=0.0001), loss="categorical_crossentropy", metrics=["accuracy"])
+model.compile(optimizer=Adam(lr=0.0001), loss="categorical_crossentropy", metrics=["accuracy"])
 
 
 
